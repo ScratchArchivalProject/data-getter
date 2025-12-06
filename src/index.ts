@@ -2,8 +2,25 @@ import pkg from "sqlite3";
 const { Database } = pkg;
 
 // the first published project has an ID of 104. there is no point in checking IDs before this because they're guaranteed to error
-let currentID = 104;
+const start = 104;
 const limit: number | null = null;
+
+let currentID = start;
+let successful = 0;
+let failure = 0;
+let time = 0;
+
+const exit = () => {
+  console.log();
+  console.log(`${currentID - start} projects fetched, ${successful} OK / ${failure} NOT OK`);
+  console.log(`${Math.round(time * 100) / 100} seconds`);
+
+  process.exit(0);
+};
+
+setInterval(() => time += 0.01, 107);
+
+process.on("SIGINT", exit);
 
 const db = new Database("projects.sqlite3");
 db.run(`CREATE TABLE IF NOT EXISTS projects (
@@ -26,12 +43,13 @@ db.run(`CREATE TABLE IF NOT EXISTS projects (
   remix_root INTEGER
 )`);
 
-while (!limit || currentID > limit) {
+while (!limit || currentID <= limit) {
   console.log(`- ${currentID}`);
   console.log("  Fetching...");
   const res = await fetch(`https://api.scratch.mit.edu/projects/${currentID}`);
   if (res.ok) {
     console.log("  OK");
+    successful++;
     const project = await res.json();
     console.log(`  ${project.title} by ${project.author.username}`);
     db.run("INSERT INTO projects (id, title, description, instructions, comments_allowed, author_id, author_username, author_scratch_team, created, modified, shared, views, loves, favorites, remixes, remix_parent, remix_root) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
@@ -57,8 +75,9 @@ while (!limit || currentID > limit) {
     );
   } else {
     console.log("  NOT OK");
+    failure++;
   }
   currentID++;
 }
 
-export {};
+exit();
