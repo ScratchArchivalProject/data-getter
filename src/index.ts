@@ -2,7 +2,7 @@ import pkg from "sqlite3";
 const { Database } = pkg;
 
 // the first published project has an ID of 104. there is no point in checking IDs before this because they're guaranteed to error
-const start = 1043973072;
+const start = 104;
 const limit: number | null = null;
 
 let currentID = start;
