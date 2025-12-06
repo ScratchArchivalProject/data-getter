@@ -12,8 +12,8 @@ let time = 0;
 
 const exit = () => {
   console.log();
-  console.log(`${currentID - start} projects fetched, ${successful} OK / ${failure} NOT OK`);
-  console.log(`${Math.round(time * 100) / 100} seconds`);
+  console.log(`\x1b[1m${currentID - start}\x1b[0m projects fetched, \x1b[1;32m${successful}\x1b[0m OK / \x1b[1;31m${failure}\x1b[0m NOT OK`);
+  console.log(`\x1b[1m${Math.round(time * 100) / 100}\x1b[0m seconds`);
 
   process.exit(0);
 };
@@ -44,11 +44,11 @@ db.run(`CREATE TABLE IF NOT EXISTS projects (
 )`);
 
 while (!limit || currentID <= limit) {
-  console.log(`- ${currentID}`);
+  console.log(`\x1b[2m-\x1b[0m \x1b[1;34m${currentID}\x1b[0m`);
   console.log("  Fetching...");
   const res = await fetch(`https://api.scratch.mit.edu/projects/${currentID}`);
   if (res.ok) {
-    console.log("  OK");
+    console.log("  \x1b[1;32mOK\x1b[0m");
     successful++;
     const project = await res.json();
     console.log(`  ${project.title} by ${project.author.username}`);
@@ -74,7 +74,7 @@ while (!limit || currentID <= limit) {
       ]
     );
   } else {
-    console.log("  NOT OK");
+    console.log("  \x1b[1;31mNOT OK\x1b[0m");
     failure++;
   }
   currentID++;
