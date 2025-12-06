@@ -12,6 +12,7 @@ let time = 0;
 
 const exit = () => {
   console.log();
+  console.log();
   console.log(`\x1b[1m${currentID - start}\x1b[0m projects fetched, \x1b[1;32m${successful}\x1b[0m ok / \x1b[1;31m${failure}\x1b[0m err`);
   console.log(`\x1b[1m${Math.round(time * 100) / 100}\x1b[0m seconds`);
 
@@ -44,11 +45,12 @@ db.run(`CREATE TABLE IF NOT EXISTS projects (
 )`);
 
 while (!limit || currentID <= limit) {
-  process.stdout.write(`\x1b[0;1;34m${currentID}\x1b[0m   `);
+  process.stdout.write(`\x1b[0;1;34m${currentID}\x1b[0m`);
   const res = await fetch(`https://api.scratch.mit.edu/projects/${currentID}`);
+  process.stdout.write(`\x1b[${currentID.toString().length}D`);
   if (res.ok) {
     const project = await res.json();
-    console.log(`\x1b[1;32mOK\x1b[0m   \x1b[2m${project.title} by ${project.author.username}\x1b[0m`);
+    console.log(`\x1b[1;32m${currentID}\x1b[0m  \x1b[2m${project.title} by ${project.author.username}\x1b[0m`);
     successful++;
     db.run("INSERT INTO projects (id, title, description, instructions, comments_allowed, author_id, author_username, author_scratch_team, created, modified, shared, views, loves, favorites, remixes, remix_parent, remix_root) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
@@ -72,7 +74,7 @@ while (!limit || currentID <= limit) {
       ]
     );
   } else {
-    console.log(`\x1b[1;31mX\x1b[0m`);
+    console.log(`\x1b[2m${currentID}\x1b[0m`);
     failure++;
   }
   currentID++;
