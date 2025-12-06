@@ -1,7 +1,14 @@
 {
   "name": "data-getter",
   "private": true,
+  "main": "./src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "./node_modules/typescript/bin/tsc && node .",
+    "run": "node ."
+  },
   "dependencies": {
+    "sqlite3": "^5.1.7",
     "typescript": "^5.9.3"
   }
 }
