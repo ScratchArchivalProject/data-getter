@@ -2,7 +2,7 @@ import pkg from "sqlite3";
 const { Database } = pkg;
 
 // the first published project has an ID of 104. there is no point in checking IDs before this because they're guaranteed to error
-const start = 104;
+const start = 1043973072;
 const limit: number | null = null;
 
 let currentID = start;
@@ -45,7 +45,6 @@ db.run(`CREATE TABLE IF NOT EXISTS projects (
 
 while (!limit || currentID <= limit) {
   console.log(`\x1b[2m-\x1b[0m \x1b[1;34m${currentID}\x1b[0m`);
-  console.log("  Fetching...");
   const res = await fetch(`https://api.scratch.mit.edu/projects/${currentID}`);
   if (res.ok) {
     console.log("  \x1b[1;32mOK\x1b[0m");
